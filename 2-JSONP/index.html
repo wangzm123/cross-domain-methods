@@ -2,21 +2,75 @@
 <html lang="en">
 <head>
     <meta charset="UTF-8">
+    <script src="http://ajax.googleapis.com/ajax/libs/jquery/1.2.6/jquery.min.js" type="text/javascript"></script>
     <title>JSONP-demo</title>
 </head>
 <body>
 <p>hello world</p>
+<button onClick="fetch()">点击获取跨域数据</button>
+<p>等待返回结果</p>
+
+
+
+
+
+
+
+<!--
+    Jquery JSONP 跨域
+<button onClick="getData()">发请求</button>
+<p>等待发送请求</p>
+<script> 
+    function getData () {
+        $.ajax({
+            type:'get',
+            dataType:'jsonp',
+            jsonp:'callback',
+            url:'http://127.0.0.1:3001/data',
+            data:{},
+            success:function(data){
+                var ele = document.getElementsByTagName('p')[1]
+                ele.innerHTML = data.message
+            }
+        })
+    }
+</script>-->
+
+
+
 <script>
+    function fetch (){
+        var JSONP = document.createElement('script')
+        JSONP.type = "text/javaScript"
+        JSONP.src="http://127.0.0.1:3001/data?callback=myFunction"
+        document.getElementsByTagName('head')[0].appendChild(JSONP)
+    }
     function myFunction (data) {
         alert('获取数据成功，2s后改变数据！')
-        let p = document.getElementsByTagName('p')[0]
+        let p = document.getElementsByTagName('p')[1]
         setTimeout(function () {
             p.innerHTML = data.message
         }, 2000)
         // 2s后p标签内的内容将改变
     }
 </script>
-<script src="http://localhost:3001?callback=myFunction"></script>
+
+
+<!--<script src="http://localhost:3001?callback=myFunction"></script>-->
+
 <!--在src里面的问号？后面的参数({callback: 'myFunction'})可以在3001端口页面中可以通过req.query.callback获取-->
+<!--
+    Jsonp原理： 
+    首先在客户端注册一个callback, 然后把callback的名字传给服务器。
+
+    此时，服务器先生成 json 数据。
+    然后以 javascript 语法的方式，生成一个function , function 名字就是传递上来的参数 jsonp.
+
+    最后将 json 数据直接以入参的方式，放置到 function 中，这样就生成了一段 js 语法的文档，返回给客户端。
+
+    客户端浏览器，解析script标签，并执行返回的 javascript 文档，此时数据作为参数，传入到了客户端预先定义好的 callback 函数里.（动态执行回调函数）
+-->
+
+
 </body>
 </html>
